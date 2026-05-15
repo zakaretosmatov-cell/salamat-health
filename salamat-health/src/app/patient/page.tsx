@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bed, Crown, Star, Wifi, Tv, Wind, Bath, Coffee, CheckCircle, Send, Clock, Calendar, Bell, ChevronRight } from "lucide-react";
+import { Bed, Crown, Star, Wifi, Tv, Wind, Bath, Coffee, CheckCircle, Send, Clock, Calendar, ChevronRight } from "lucide-react";
 import { db } from "@/firebase/config";
 import { collection, addDoc, query, where, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { useAuthStore } from "@/store/authStore";
@@ -49,9 +49,36 @@ const rooms: Room[] = [
 ];
 
 const categoryConfig = {
-  lux: { label: "Lux", gradient: "from-amber-400 to-yellow-500", bg: "bg-amber-50 dark:bg-amber-900/20", border: "border-amber-200 dark:border-amber-800", icon: Crown, stars: 5 },
-  econom: { label: "Econom", gradient: "from-blue-400 to-blue-600", bg: "bg-blue-50 dark:bg-blue-900/20", border: "border-blue-200 dark:border-blue-800", icon: Star, stars: 3 },
-  oddiy: { label: "Oddiy", gradient: "from-slate-400 to-slate-500", bg: "bg-slate-50 dark:bg-slate-800", border: "border-slate-200 dark:border-slate-700", icon: Bed, stars: 1 },
+  lux: {
+    label: "Lux",
+    gradient: "from-amber-400 to-yellow-500",
+    bg: "bg-amber-50 dark:bg-amber-900/20",
+    border: "border-amber-200 dark:border-amber-800",
+    activeBg: "bg-amber-500",
+    icon: Crown,
+    stars: 5,
+    desc: "Hashamatli xonalar, barcha qulayliklar",
+  },
+  econom: {
+    label: "Econom",
+    gradient: "from-blue-400 to-blue-600",
+    bg: "bg-blue-50 dark:bg-blue-900/20",
+    border: "border-blue-200 dark:border-blue-800",
+    activeBg: "bg-blue-500",
+    icon: Star,
+    stars: 3,
+    desc: "Qulay xonalar, asosiy qulayliklar",
+  },
+  oddiy: {
+    label: "Oddiy",
+    gradient: "from-slate-400 to-slate-500",
+    bg: "bg-slate-50 dark:bg-slate-800",
+    border: "border-slate-200 dark:border-slate-700",
+    activeBg: "bg-slate-500",
+    icon: Bed,
+    stars: 1,
+    desc: "Sodda va arzon xonalar",
+  },
 };
 
 const amenityIcons: Record<string, React.ElementType> = {
@@ -66,7 +93,7 @@ const statusConfig = {
 
 export default function PatientDashboard() {
   const { user, userName } = useAuthStore();
-  const [filter, setFilter] = useState<"all" | RoomCategory>("all");
+  const [activeCategory, setActiveCategory] = useState<RoomCategory | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [bronOpen, setBronOpen] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -85,7 +112,7 @@ export default function PatientDashboard() {
     return () => unsub();
   }, [user?.uid]);
 
-  const filtered = rooms.filter(r => filter === "all" || r.category === filter);
+  const filteredRooms = activeCategory ? rooms.filter(r => r.category === activeCategory) : [];
 
   const nights = checkIn && checkOut
     ? Math.max(0, Math.ceil((new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)))
@@ -127,7 +154,7 @@ export default function PatientDashboard() {
   return (
     <DashboardLayout title="Mening sahifam" subtitle={`Xush kelibsiz, ${userName || "Mehmon"}`}>
 
-      {/* Xush kelibsiz banner */}
+      {/* Banner */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -137,37 +164,140 @@ export default function PatientDashboard() {
         <div className="relative z-10">
           <p className="text-blue-100 text-sm mb-1">Salamat Health</p>
           <h2 className="text-2xl font-bold mb-1">Xush kelibsiz! 👋</h2>
-          <p className="text-blue-100 text-sm">Hona bron qiling yoki uchrashuvlaringizni ko'ring</p>
+          <p className="text-blue-100 text-sm">Hona turini tanlang va bron qiling</p>
         </div>
       </motion.div>
 
-      {/* Tezkor havolalar */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        <Link href="/patient/rooms">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            className="bg-gradient-to-br from-amber-400 to-yellow-500 text-white rounded-2xl p-4 flex items-center gap-3 shadow-sm cursor-pointer">
-            <Bed className="w-7 h-7" />
-            <div>
-              <p className="font-semibold">Hona bron</p>
-              <p className="text-xs text-white/80">Lux, Econom, Oddiy</p>
-            </div>
-          </motion.div>
-        </Link>
-        <Link href="/patient/appointments">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-4 flex items-center gap-3 shadow-sm cursor-pointer">
-            <Calendar className="w-7 h-7" />
-            <div>
-              <p className="font-semibold">Uchrashuvlar</p>
-              <p className="text-xs text-white/80">Jadval ko'rish</p>
-            </div>
-          </motion.div>
-        </Link>
+      {/* Kategoriya tugmalari — TEPADA */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        {(Object.entries(categoryConfig) as [RoomCategory, typeof categoryConfig.lux][]).map(([key, cat], i) => {
+          const CatIcon = cat.icon;
+          const isActive = activeCategory === key;
+          return (
+            <motion.button
+              key={key}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setActiveCategory(isActive ? null : key)}
+              className={`relative rounded-2xl p-4 text-left transition-all shadow-sm ${
+                isActive
+                  ? `bg-gradient-to-br ${cat.gradient} text-white shadow-lg`
+                  : `bg-white dark:bg-slate-900 border-2 ${cat.border} hover:shadow-md`
+              }`}
+            >
+              <CatIcon className={`w-7 h-7 mb-2 ${isActive ? "text-white" : key === "lux" ? "text-amber-500" : key === "econom" ? "text-blue-500" : "text-slate-500"}`} />
+              <p className={`font-bold text-lg ${isActive ? "text-white" : "text-slate-800 dark:text-slate-100"}`}>{cat.label}</p>
+              <p className={`text-xs mt-0.5 ${isActive ? "text-white/80" : "text-slate-400"}`}>{cat.desc}</p>
+              <div className="flex gap-0.5 mt-2">
+                {Array.from({ length: cat.stars }).map((_, i) => (
+                  <Star key={i} className={`w-3 h-3 ${isActive ? "text-white fill-white" : "text-amber-400 fill-amber-400"}`} />
+                ))}
+              </div>
+              {isActive && (
+                <motion.div
+                  layoutId="activeCat"
+                  className="absolute inset-0 rounded-2xl ring-2 ring-white/40"
+                />
+              )}
+            </motion.button>
+          );
+        })}
       </div>
+
+      {/* Honalar — faqat tanlangan kategoriya */}
+      <AnimatePresence mode="wait">
+        {activeCategory ? (
+          <motion.div
+            key={activeCategory}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                {React.createElement(categoryConfig[activeCategory].icon, {
+                  className: `w-5 h-5 ${activeCategory === "lux" ? "text-amber-500" : activeCategory === "econom" ? "text-blue-500" : "text-slate-500"}`
+                })}
+                {categoryConfig[activeCategory].label} honalar
+              </h2>
+              <button onClick={() => setActiveCategory(null)} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+                Yopish ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredRooms.map((room, i) => {
+                const cat = categoryConfig[room.category];
+                const CatIcon = cat.icon;
+                return (
+                  <motion.div
+                    key={room.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.07 }}
+                    whileHover={{ y: -3 }}
+                  >
+                    <Card className={`overflow-hidden border-2 ${cat.border} hover:shadow-lg transition-all`}>
+                      <div className={`bg-gradient-to-r ${cat.gradient} p-4 text-white relative overflow-hidden`}>
+                        <div className="absolute right-0 top-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                        <div className="relative z-10 flex items-center justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <CatIcon className="w-5 h-5" />
+                              <span className="font-bold text-xl">#{room.number}</span>
+                            </div>
+                            <p className="text-white/80 text-xs">{cat.label} · {room.floor}-qavat</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-bold">${room.price}</p>
+                            <p className="text-white/70 text-xs">/kun</p>
+                          </div>
+                        </div>
+                      </div>
+                      <CardContent className="p-4">
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{room.description}</p>
+                        <div className="flex flex-wrap gap-1.5 mb-4">
+                          {room.amenities.map(a => {
+                            const AIcon = amenityIcons[a] || Bed;
+                            return (
+                              <div key={a} className={`flex items-center gap-1 ${cat.bg} rounded-lg px-2 py-1`}>
+                                <AIcon className="w-3.5 h-3.5 text-slate-500" />
+                                <span className="text-xs text-slate-600 dark:text-slate-300">{a}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <Button className="w-full" onClick={() => { setSelectedRoom(room); setBronOpen(true); }}>
+                          <Send className="w-4 h-4" /> Bron qilish
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="empty"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-center py-10 text-slate-400"
+          >
+            <Bed className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <p className="text-sm">Hona turini tanlang</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mening bronlarim */}
       {myBrons.length > 0 && (
-        <Card className="mb-6">
+        <Card className="mt-6">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-amber-500" /> Bron so'rovlarim
@@ -198,64 +328,19 @@ export default function PatientDashboard() {
         </Card>
       )}
 
-      {/* Honalar */}
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Honalar</h2>
-        <div className="flex gap-2">
-          {(["all", "lux", "econom", "oddiy"] as const).map(cat => (
-            <button key={cat} onClick={() => setFilter(cat)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${filter === cat ? "bg-blue-600 text-white" : "bg-white dark:bg-slate-800 text-slate-600 border border-slate-200 dark:border-slate-700"}`}>
-              {cat === "all" ? "Barchasi" : cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filtered.map((room, i) => {
-          const cat = categoryConfig[room.category];
-          const CatIcon = cat.icon;
-          return (
-            <motion.div key={room.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }} whileHover={{ y: -3 }}>
-              <Card className={`overflow-hidden border-2 ${cat.border} hover:shadow-lg transition-all`}>
-                <div className={`bg-gradient-to-r ${cat.gradient} p-4 text-white relative overflow-hidden`}>
-                  <div className="absolute right-0 top-0 w-20 h-20 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-                  <div className="relative z-10 flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <CatIcon className="w-5 h-5" />
-                        <span className="font-bold text-lg">#{room.number}</span>
-                      </div>
-                      <p className="text-white/80 text-xs">{cat.label} · {room.floor}-qavat</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold">${room.price}</p>
-                      <p className="text-white/70 text-xs">/kun</p>
-                    </div>
-                  </div>
-                </div>
-                <CardContent className="p-3">
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{room.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {room.amenities.map(a => {
-                      const AIcon = amenityIcons[a] || Bed;
-                      return (
-                        <div key={a} className={`flex items-center gap-1 ${cat.bg} rounded-lg px-1.5 py-0.5`}>
-                          <AIcon className="w-3 h-3 text-slate-500" />
-                          <span className="text-[10px] text-slate-600 dark:text-slate-300">{a}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <Button className="w-full" size="sm" onClick={() => { setSelectedRoom(room); setBronOpen(true); }}>
-                    <Send className="w-3.5 h-3.5" /> Bron qilish
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </div>
+      {/* Uchrashuvlar havola */}
+      <Link href="/patient/appointments">
+        <motion.div whileHover={{ scale: 1.01 }} className="mt-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl p-4 flex items-center justify-between cursor-pointer">
+          <div className="flex items-center gap-3">
+            <Calendar className="w-6 h-6" />
+            <div>
+              <p className="font-semibold">Uchrashuvlar</p>
+              <p className="text-xs text-blue-100">Jadval ko'rish</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-blue-200" />
+        </motion.div>
+      </Link>
 
       {/* Bron Dialog */}
       <Dialog open={bronOpen} onOpenChange={setBronOpen}>

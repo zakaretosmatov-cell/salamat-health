@@ -70,44 +70,84 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Chap panel */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600 overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-blue-700 via-blue-800 to-cyan-700 overflow-hidden">
+        {/* Animatsiyali doiralar */}
         <div className="absolute inset-0">
-          {[...Array(6)].map((_, i) => (
+          {[...Array(5)].map((_, i) => (
             <motion.div key={i} className="absolute rounded-full bg-white/5"
-              style={{ width: `${(i + 2) * 80}px`, height: `${(i + 2) * 80}px`, left: `${20 + i * 10}%`, top: `${10 + i * 12}%` }}
-              animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-              transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.5 }}
+              style={{ width: `${(i + 2) * 100}px`, height: `${(i + 2) * 100}px`, left: `${10 + i * 15}%`, top: `${5 + i * 15}%` }}
+              animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }}
+              transition={{ duration: 5 + i, repeat: Infinity, delay: i * 0.7 }}
             />
           ))}
         </div>
-        <div className="relative z-10 flex flex-col justify-center px-12 text-white">
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <div className="flex items-center gap-3 mb-8">
+
+        <div className="relative z-10 flex flex-col justify-between h-full px-10 py-10 text-white">
+          {/* Logo */}
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+            <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
                 <Sparkles className="w-7 h-7" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold">{t("appName")}</h1>
-                <p className="text-blue-200 text-sm">{t("tagline")}</p>
+                <h1 className="text-xl font-bold">Salamat Med Center</h1>
+                <p className="text-blue-200 text-xs">Ош шаары · Kyrgyzstan</p>
               </div>
             </div>
-            <h2 className="text-4xl font-bold leading-tight mb-4">
-              {t("welcomeBack")}
+          </motion.div>
+
+          {/* Asosiy kontent */}
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
+            <h2 className="text-4xl font-bold leading-tight mb-3">
+              Заманбап<br />диагностика<br />жана дарылоо
             </h2>
-            <p className="text-blue-100 text-lg mb-10 leading-relaxed">
-              {t("welcomeDesc")}
+            <p className="text-blue-100 text-base mb-8 leading-relaxed">
+              Эс алуу жана дарылоо бир жерде.<br />
+              Комплекстүү саламаттыкты чыңдоо.
             </p>
-            <div className="grid grid-cols-1 gap-4">
+
+            {/* Statistika */}
+            <div className="grid grid-cols-3 gap-3 mb-8">
               {[
-                { icon: Heart, key: "totalPatients" },
-                { icon: Shield, key: "security" },
-                { icon: Activity, key: "analytics" },
-              ].map(({ icon: Icon, key }) => (
-                <div key={key} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3">
-                  <Icon className="w-5 h-5 text-cyan-300" />
-                  <span className="text-sm text-blue-100">{t(key as never)}</span>
+                { value: "25.2K", label: "Подписчики" },
+                { value: "761", label: "Публикации" },
+                { value: "10+", label: "Йиллик тажрибе" },
+              ].map((s) => (
+                <div key={s.label} className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold">{s.value}</p>
+                  <p className="text-xs text-blue-200 mt-0.5">{s.label}</p>
                 </div>
               ))}
+            </div>
+
+            {/* Xizmatlar */}
+            <div className="space-y-2">
+              {[
+                { icon: Heart, text: "Заманбап диагностика жана дарылоо" },
+                { icon: Shield, text: "Массаж · Бассейн · Wellness" },
+                { icon: Activity, text: "Check-up · Конференция залы" },
+              ].map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2.5">
+                  <Icon className="w-4 h-4 text-cyan-300 flex-shrink-0" />
+                  <span className="text-sm text-blue-100">{text}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Pastki qism — kontakt */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3">
+              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                  <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.855L0 24l6.335-1.508A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.65-.502-5.18-1.38l-.37-.22-3.84.914.977-3.748-.242-.386A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs text-blue-200">WhatsApp</p>
+                <p className="text-sm font-semibold">+996 554 030 030</p>
+              </div>
             </div>
           </motion.div>
         </div>
