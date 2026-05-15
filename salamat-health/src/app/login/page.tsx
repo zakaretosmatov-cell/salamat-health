@@ -22,7 +22,7 @@ type FormData = z.infer<typeof schema>;
 const roleRedirects: Record<UserRole, string> = {
   admin: "/admin",
   receptionist: "/reception",
-  doctor: "/doctor",
+  doctor: "/login",
   patient: "/patient",
 };
 
@@ -30,7 +30,6 @@ const roleRedirects: Record<UserRole, string> = {
 const demoAccounts = [
   { role: "Admin", email: "admin@salamat.health", password: "admin123", color: "from-violet-500 to-purple-600" },
   { role: "Reception", email: "reception@salamat.health", password: "recep123", color: "from-blue-500 to-cyan-500" },
-  { role: "Doctor", email: "doctor@salamat.health", password: "doctor123", color: "from-emerald-500 to-teal-500" },
   { role: "Patient", email: "patient@salamat.health", password: "patient123", color: "from-rose-500 to-pink-500" },
 ];
 
@@ -56,7 +55,7 @@ export default function LoginPage() {
       // Demo mode: simulate login based on email pattern
       const demo = demoAccounts.find(d => d.email === data.email);
       if (demo) {
-        const roleMap: Record<string, UserRole> = { Admin: "admin", Reception: "receptionist", Doctor: "doctor", Patient: "patient" };
+        const roleMap: Record<string, UserRole> = { Admin: "admin", Reception: "receptionist", Patient: "patient" };
         const role = roleMap[demo.role];
         setUser({ uid: "demo-" + role, email: data.email } as never, role, demo.role + " User");
         router.push(roleRedirects[role]);

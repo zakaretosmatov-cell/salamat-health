@@ -7,7 +7,7 @@ import { UserRole } from "@/types";
 const roleRedirects: Record<UserRole, string> = {
   admin: "/admin",
   receptionist: "/reception",
-  doctor: "/doctor",
+  doctor: "/login",
   patient: "/patient",
 };
 

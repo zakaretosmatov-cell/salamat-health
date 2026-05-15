@@ -46,15 +46,7 @@ const navByRole: Record<UserRole, NavItem[]> = {
     { label: "Payments", href: "/reception/payments", icon: CreditCard },
     { label: "Notifications", href: "/reception/notifications", icon: Bell },
   ],
-  doctor: [
-    { label: "Dashboard", href: "/doctor", icon: LayoutDashboard },
-    { label: "My Patients", href: "/doctor/patients", icon: Users },
-    { label: "Schedule", href: "/doctor/schedule", icon: Calendar },
-    { label: "Records", href: "/doctor/records", icon: FileText },
-    { label: "Prescriptions", href: "/doctor/prescriptions", icon: ClipboardList },
-    { label: "Consultations", href: "/doctor/consultations", icon: Stethoscope },
-    { label: "Alerts", href: "/doctor/alerts", icon: Activity },
-  ],
+  doctor: [],
   patient: [
     { label: "Dashboard", href: "/patient", icon: LayoutDashboard },
     { label: "Appointments", href: "/patient/appointments", icon: Calendar },
