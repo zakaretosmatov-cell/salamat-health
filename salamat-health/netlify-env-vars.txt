@@ -1,0 +1,22 @@
+Netlify Environment Variables - Copy paste each one:
+
+Key: NEXT_PUBLIC_FIREBASE_API_KEY
+Value: AIzaSyC4tDdq1FjjOykHocK4_N6hQgyced1dyHw
+
+Key: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+Value: salamat-8b843.firebaseapp.com
+
+Key: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+Value: salamat-8b843
+
+Key: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+Value: salamat-8b843.firebasestorage.app
+
+Key: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+Value: 366050882411
+
+Key: NEXT_PUBLIC_FIREBASE_APP_ID
+Value: 1:366050882411:web:afdc32729b353b9d9e922e
+
+Key: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+Value: G-ETY7Z4P5Z1
