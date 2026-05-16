@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Bell, Search, Sun, Moon, Menu } from "lucide-react";
+import { Bell, Search, Sun, Moon, Menu, Trees } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useUIStore } from "@/store/uiStore";
 import { useAuthStore } from "@/store/authStore";
@@ -66,9 +66,23 @@ export default function Header({ title, subtitle }: HeaderProps) {
         <Button variant="ghost" size="icon-sm" onClick={toggleSidebar} className="lg:hidden">
           <Menu className="w-5 h-5" />
         </Button>
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white">{title}</h1>
-          {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+        <div className="flex items-center gap-6">
+          <div>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white">{title}</h1>
+            {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+          </div>
+          {role === "patient" && (
+            <Link href="/patient/zoopark">
+              <motion.button 
+                whileHover={{ scale: 1.05 }} 
+                whileTap={{ scale: 0.95 }}
+                className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300 dark:border-emerald-900/50 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 transition-colors shadow-sm text-sm font-medium"
+              >
+                <Trees className="w-4 h-4" />
+                Zoopark
+              </motion.button>
+            </Link>
+          )}
         </div>
       </div>
 
