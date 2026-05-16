@@ -10,7 +10,7 @@ import { UserRole } from "@/types";
 import {
   LayoutDashboard, Users, Calendar, CreditCard, FileText, Settings,
   Activity, Bed, Heart, Stethoscope, ClipboardList, Bell, BarChart3,
-  Shield, LogOut, ChevronLeft, Sparkles, Building2, UserCog,
+  Shield, LogOut, ChevronLeft, Sparkles, Building2, UserCog, Trees
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
@@ -52,6 +52,7 @@ const navByRole: Record<UserRole, NavItem[]> = {
     { label: "Honalar", href: "/patient/rooms", icon: Bed },
     { label: "Appointments", href: "/patient/appointments", icon: Calendar },
     { label: "Notifications", href: "/patient/notifications", icon: Bell },
+    { label: "Zoopark", href: "/patient/zoopark", icon: Trees },
   ],
 };
 
