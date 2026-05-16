@@ -154,17 +154,64 @@ export default function PatientDashboard() {
   return (
     <DashboardLayout title="Mening sahifam" subtitle={`Xush kelibsiz, ${userName || "Mehmon"}`}>
 
-      {/* Banner */}
+      {/* Premium Hero Banner bilan Rasm */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 rounded-2xl p-6 mb-6 text-white relative overflow-hidden"
+        className="relative rounded-3xl mb-8 overflow-hidden shadow-2xl h-72 sm:h-80 flex items-end p-6 sm:p-8"
       >
-        <div className="absolute right-0 top-0 w-48 h-48 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4" />
-        <div className="relative z-10">
-          <p className="text-blue-100 text-sm mb-1">Salamat Health</p>
-          <h2 className="text-2xl font-bold mb-1">Xush kelibsiz! 👋</h2>
-          <p className="text-blue-100 text-sm">Hona turini tanlang va bron qiling</p>
+        {/* Orqa fon rasmi - Foydalanuvchi rasmni public papkaga joylashi kerak */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 hover:scale-105"
+          style={{ backgroundImage: "url('/salamat-building.jpg')" }} 
+        />
+        
+        {/* Qoraytirilgan gradient (Overlay) - matn aniq o'qilishi uchun */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 via-transparent to-transparent" />
+        
+        <div className="relative z-10 w-full flex flex-col sm:flex-row justify-between items-end gap-4">
+          <div className="max-w-xl">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-semibold mb-4 shadow-sm"
+            >
+              <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+              Premium Klinika
+            </motion.div>
+            
+            <motion.h2 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight drop-shadow-md"
+            >
+              Salamat Health ga Xush Kelibsiz!
+            </motion.h2>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-blue-50 text-sm sm:text-base font-medium opacity-90 drop-shadow-sm"
+            >
+              Sog'lig'ingiz o'z qo'lingizda. Zamonaviy xonalarni bron qiling, uchrashuvlarni rejalashtiring va sifatli tibbiy xizmatdan bahramand bo'ling.
+            </motion.p>
+          </div>
+          
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            className="hidden sm:flex"
+          >
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 text-center shadow-xl">
+              <p className="text-white text-xs font-medium mb-1 opacity-80">Ish vaqti</p>
+              <p className="text-white font-bold text-lg">24/7</p>
+            </div>
+          </motion.div>
         </div>
       </motion.div>
 
