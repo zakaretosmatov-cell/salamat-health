@@ -138,6 +138,18 @@ export default function PatientDashboard() {
         status: "kutilmoqda",
         createdAt: serverTimestamp(),
       });
+      
+      // Yangi bron haqida reception ga xabar yuborish
+      await addDoc(collection(db, "notifications"), {
+        recipientRole: "reception",
+        title: "Yangi xona bron qilindi!",
+        text: `Bemor ${userName || "Noma'lum"} ${selectedRoom.number}-xonani (${nights} kunga) bron qildi.`,
+        type: "info",
+        createdAt: serverTimestamp(),
+        read: false,
+        link: "/reception/rooms"
+      });
+
       setSuccess(true);
       setTimeout(() => {
         setBronOpen(false);
